@@ -10,6 +10,14 @@ static char TCPPORT_NIM[] = "29334";
 #define NIM_NAME	 "Name="
 #define NIM_CHALLENGE "Player="
 
+const int X_PLAYER = 1;
+const int O_PLAYER = 2;
+const int ABORT    = -1;
+const int noWinner = 0;
+const int xWinner  = 1;
+const int oWinner  = 2;
+const int TIE      = 3;
+
 const int MAX_SEND_BUF     = 2048;
 const int MAX_RECV_BUF     = 2048;
 const int MAX_HOSTNAME     = 1024;

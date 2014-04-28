@@ -111,11 +111,11 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::strin
 	bool myMove;
 
 	if (player == CHALLENGER) {
-		std::cout << "Playing as X" << std::endl;
+		std::cout << "Playing as Challenger" << std::endl;
 		opponent = HOST;
 		myMove = true;
 	} else {
-		std::cout << "Playing as O" << std::endl;
+		std::cout << "Playing as Host" << std::endl;
 		opponent = CHALLENGER;
 		myMove = false;
 	}

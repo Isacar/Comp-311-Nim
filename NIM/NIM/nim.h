@@ -6,6 +6,10 @@ static char BROADCAST_ADDR[] = "10.1.255.255";
 static char UDPPORT_NIM[] = "29333";
 static char TCPPORT_NIM[] = "29334";
 
+#define NIM_QUERY  "Who?"
+#define NIM_NAME	 "Name="
+#define NIM_CHALLENGE "Player="
+
 const int MAX_SEND_BUF     = 2048;
 const int MAX_RECV_BUF     = 2048;
 const int MAX_HOSTNAME     = 1024;

@@ -7,13 +7,13 @@
 
 int server_main(int argc, char *argv[], std::string playerName)
 {
-	/*SOCKET s;
+	SOCKET s;
 	char buf[MAX_RECV_BUF];
 	std::string host;
 	std::string port;
 	char response_str[MAX_SEND_BUF];
 	
-	//s = passivesock(TicTacToe_UDPPORT,"udp");
+	s = passivesock(UDPPORT_NIM,"udp");
 
 	std::cout << std::endl << "Waiting for a challenge..." << std::endl;
 	int len = UDP_recv(s, buf, MAX_RECV_BUF, (char*)host.c_str() , (char*)port.c_str());
@@ -21,22 +21,23 @@ int server_main(int argc, char *argv[], std::string playerName)
 
 	bool finished = false;
 	while (!finished) {
-		if ( strcmp(buf,TicTacToe_QUERY) == 0) {
+	//If the server receives a datagram that contains the string “Name?\0”
+		if ( strcmp(buf,NIM_QUERY) == 0) {
 			// Respond to name query
-			strcpy_s(response_str,TicTacToe_NAME);
+			strcpy_s(response_str,NIM_NAME);
 			strcat_s(response_str,playerName.c_str());
 			UDP_send(s, response_str, strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
 			std::cout << "Sending: " << response_str << std::endl;
-
-		} else if ( strncmp(buf,TicTacToe_CHALLENGE,strlen(TicTacToe_CHALLENGE)) == 0) {
+	//If the server receives a datagram that contains a string similar to “Play? Name=client_name\0”
+		} else if ( strncmp(buf,NIM_CHALLENGE,strlen(NIM_CHALLENGE)) == 0) {
 			// Received a challenge  
-			char *startOfName = strstr(buf,TicTacToe_CHALLENGE);
+			char *startOfName = strstr(buf,NIM_CHALLENGE);
 			if (startOfName != NULL) {
-				std::cout << std::endl << "You have been challenged by " << startOfName+strlen(TicTacToe_CHALLENGE) << std::endl;
+				std::cout << std::endl << "You have been challenged by " << startOfName+strlen(NIM_CHALLENGE) << std::endl;
 			}
 			
 			// Play the game.  You are the 'O' player
-			int winner = playTicTacToe(s, (char*) playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER);
+			//int winner = playnim(s, (char*) playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER);
 			finished = true;
 		}
 
@@ -68,6 +69,6 @@ int server_main(int argc, char *argv[], std::string playerName)
 		}
 	}
 	closesocket(s);
-	*/
+
 	return 0;
 }

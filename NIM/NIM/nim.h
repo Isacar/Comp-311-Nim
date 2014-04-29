@@ -6,9 +6,9 @@ static char BROADCAST_ADDR[] = "10.1.255.255";
 static char UDPPORT_NIM[] = "29333";
 static char TCPPORT_NIM[] = "29334";
 
-#define NIM_QUERY  "Who?"
+#define NIM_QUERY  "Name?"
 #define NIM_NAME	 "Name="
-#define NIM_CHALLENGE "Player="
+#define NIM_CHALLENGE "Play? Name="
 
 const int CHALLENGER = 1;
 const int HOST = 2;

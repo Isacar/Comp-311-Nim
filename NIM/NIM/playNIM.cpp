@@ -71,7 +71,7 @@ void displayBoard( vector<vector<char>> board )
 
 bool check4Win(vector<vector<char>> board )
 {
-	//int winner = noWinner;
+	int winner = noWinner;
 
 	//// Check for vertical winners
 	//int i = 1;
@@ -112,12 +112,15 @@ bool check4Win(vector<vector<char>> board )
 	//	winner = TIE;
 	//
 
-	//return winner;
+	return winner;
 }
 
 int getMove(vector<vector<char>> board ,  SOCKET s)
 {
 	int move;
+	int pile;
+	int numRocks;
+	bool isMessage = false;
 	char move_str[80];
 
 	cout << "Make your move or send a message:" << endl;
@@ -128,16 +131,20 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 	do {
 		std::cout << "Waiting on your response: ";
 		std::cin  >> move_str;
-		if(move_str[0] == 'C')
+		if(move_str[0] == 'C' || move_str[0] != 'c')
 		{
 			send(s, move_str, 80, 0);
+			isMessage = true;
 		}
 		else
 		{
 			move = atoi(move_str);
+			pile = move /100 ;
+			numRocks = move % 100;
+			
 		}
 		/*if (board[move] == 'X' || board[move] == 'O') move = 0;*/
-	} while (move < 1 || move > 9);
+	} while (isMessage || pile < 3 || pile > 9);
 
 	return move;
 }

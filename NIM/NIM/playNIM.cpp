@@ -16,17 +16,29 @@ void initializeBoard( vector<vector<char>> &board, string boardConfig)
 	boardConfig = boardConfig.substr(1);
 	for(piles; piles > 0; piles--)
 	{
-		string rocks = boardConfig.substr(0,2);
-		int rocks = atoi(rocks.c_str());
-		vector<char> newRow 
+		string rock = boardConfig.substr(0,2);
+		int rocks = atoi(rock.c_str());
+		vector<char> row;		
+		for(rocks; rocks > 0; rocks++)
+		{
+			row.push_back('0');
+		}
+		board.push_back(row);
 	}
 	/*char initBoard[10] = {'0','1','2','3','4','5','6','7','8','9'};
 	for (int i=0; i<10; i++)
 		board[i] = initBoard[i];*/
 }
 
-void updateBoard(  vector<vector<char>> &board, int move, int player)
+void updateBoard(vector<vector<char>> &board, int move)
 {
+	int pile = move/100;
+	int rocks = move %100;
+
+	for(rocks; rocks > 0; rocks)
+	{
+		board.at(pile - 1).pop_back();
+	}
 	/*if (player == CHALLENGER) {
 		board[move] = 'X';
 	} else if (player == HOST) {
@@ -37,6 +49,17 @@ void updateBoard(  vector<vector<char>> &board, int move, int player)
 
 void displayBoard( vector<vector<char>> board )
 {
+	int piles = board.size();
+
+	cout << endl;
+	for(piles; piles > 0 ; piles--)
+	{		
+		for(int i = board.at(piles - 1).size(); i > 0; i--)
+		{
+			cout << board.at(piles -1).at(i-1) << "|";
+		}
+		cout << endl;
+	}
 	/*std::cout << std::endl;
 	std::cout << board[1] << " | " << board[2] << " | " << board[3] << std::endl;
 	std::cout << "__+___+__" << std::endl;
@@ -46,53 +69,53 @@ void displayBoard( vector<vector<char>> board )
 	std::cout << std::endl;*/
 }
 
-int check4Win(char board[10])
+bool check4Win(vector<vector<char>> board )
 {
-	int winner = noWinner;
+	//int winner = noWinner;
 
-	// Check for vertical winners
-	int i = 1;
-	while (winner == noWinner && i < 4) {
-		if (board[i] == board[i+3] && board[i] == board[i+6]) {
-			winner = (board[i] == 'X') ? xWinner : oWinner;
-		}
-		i++;
-	}
+	//// Check for vertical winners
+	//int i = 1;
+	//while (winner == noWinner && i < 4) {
+	//	if (board[i] == board[i+3] && board[i] == board[i+6]) {
+	//		winner = (board[i] == 'X') ? xWinner : oWinner;
+	//	}
+	//	i++;
+	//}
 
-	// Check for horizontal winners
-	i = 1;
-	while (winner == noWinner && i < 8) {
-		if (board[i] == board[i+1] && board[i] == board[i+2]) {
-			winner = (board[i] == 'X') ? xWinner : oWinner;
-		}
-		i  += 3;
-	}
+	//// Check for horizontal winners
+	//i = 1;
+	//while (winner == noWinner && i < 8) {
+	//	if (board[i] == board[i+1] && board[i] == board[i+2]) {
+	//		winner = (board[i] == 'X') ? xWinner : oWinner;
+	//	}
+	//	i  += 3;
+	//}
 
-	// Check for diagonal winners
-	if (winner == noWinner) {
-		if ( (board[1] == board[5] && board[1] == board[9]) ||
-			 (board[3] == board[5] && board[3] == board[7]) ) {
-			winner = (board[5] == 'X') ? xWinner : oWinner;
-		}
-	}
+	//// Check for diagonal winners
+	//if (winner == noWinner) {
+	//	if ( (board[1] == board[5] && board[1] == board[9]) ||
+	//		 (board[3] == board[5] && board[3] == board[7]) ) {
+	//		winner = (board[5] == 'X') ? xWinner : oWinner;
+	//	}
+	//}
 
-	// Check for tie
-	i = 1;
-	int numMoves = 0;
-	while ( i < 10) {
-		if ( (board[i] == 'X' || board[i] == 'O') ) {
-			numMoves++;
-		}
-		i++;
-	}
-	if (winner == noWinner && numMoves == 9)
-		winner = TIE;
-	
+	//// Check for tie
+	//i = 1;
+	//int numMoves = 0;
+	//while ( i < 10) {
+	//	if ( (board[i] == 'X' || board[i] == 'O') ) {
+	//		numMoves++;
+	//	}
+	//	i++;
+	//}
+	//if (winner == noWinner && numMoves == 9)
+	//	winner = TIE;
+	//
 
-	return winner;
+	//return winner;
 }
 
-int getMove(char board[10], int player)
+int getMove(vector<vector<char>> board , int player)
 {
 	int move;
 	char move_str[80];
@@ -111,7 +134,7 @@ int getMove(char board[10], int player)
 	return move;
 }
 
-int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
+int playNIM(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT

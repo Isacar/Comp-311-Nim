@@ -115,7 +115,7 @@ bool check4Win(vector<vector<char>> board )
 	//return winner;
 }
 
-int getMove(vector<vector<char>> board , int player, SOCKET s, string host, string server)
+int getMove(vector<vector<char>> board ,  SOCKET s)
 {
 	int move;
 	char move_str[80];
@@ -130,16 +130,19 @@ int getMove(vector<vector<char>> board , int player, SOCKET s, string host, stri
 		std::cin  >> move_str;
 		if(move_str[0] == 'C')
 		{
-
+			send(s, move_str, 80, 0);
 		}
-		move = atoi(move_str);
-		if (board[move] == 'X' || board[move] == 'O') move = 0;
+		else
+		{
+			move = atoi(move_str);
+		}
+		/*if (board[move] == 'X' || board[move] == 'O') move = 0;*/
 	} while (move < 1 || move > 9);
 
 	return move;
 }
 
-int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
+int playNIM(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
@@ -147,7 +150,17 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::strin
 	std::vector<std::vector<char>> board;
 	int opponent;
 	int move;
+	char moveInfo[2];
 	bool myMove;
+
+	char* chost = new char[host.length() +1];
+	strcpy_s(chost, sizeof(chost), host.c_str());
+	char* cserver = new char[serverName.length() + 1];
+	strcpy_s(cserver, sizeof(cserver), serverName.c_str());
+	char* cport = new char[port.length() +1];
+	strcpy_s(cport, sizeof(cport), port.c_str());
+
+	
 
 	if (player == CHALLENGER) {
 		std::cout << "Playing as Challenger" << std::endl;
@@ -165,7 +178,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::strin
 	while (winner == noWinner) {
 		if (myMove) {
 			// Get my move & display board
-			move = getMove(board,player);
+			move = getMove(board, s);
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(board,move);
 			displayBoard(board);
@@ -175,12 +188,11 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::strin
 			Student should add code here to send the move to the opponent
 			(1) Convert the single digit integer, move, to a char[]
 			(2) Send the char[] to the opponent, using UDP_send()
-			****/
-			char moveInfo[2] ;
+			****/			
             _itoa_s(move, moveInfo, 1);
-            moveInfo[1] = '\0';
-            
-            UDP_send(s,moveInfo,2,host.c_str(), server);
+            moveInfo[1] = '\0';			
+
+            send(s, moveInfo, 2, 0);
 
 		} else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
@@ -200,7 +212,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::strin
                 move = atoi(moveInfo);
 
                 std::cout << "Board after your opponent's move:" << std::endl;
-                updateBoard(board,move,player);
+                updateBoard(board,move);
                 displayBoard(board);
             }
             else
@@ -218,9 +230,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::strin
 		}
 		
 		if (winner == player)
-			std::cout << "You WIN!" << std::endl;
-		else if (winner == TIE)
-			std::cout << "It's a tie." << std::endl;
+			std::cout << "You WIN!" << std::endl;		
 		else if (winner == opponent)
 			std::cout << "I'm sorry.  You lost" << std::endl;
 	}

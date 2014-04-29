@@ -6,33 +6,44 @@
 #include <WinSock2.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
-void initializeBoard( char board[10] )
+using namespace std;
+
+void initializeBoard( vector<vector<char>> &board, string boardConfig)
 {
-	char initBoard[10] = {'0','1','2','3','4','5','6','7','8','9'};
+	int piles = atoi((char*)boardConfig[0]);
+	boardConfig = boardConfig.substr(1);
+	for(piles; piles > 0; piles--)
+	{
+		string rocks = boardConfig.substr(0,2);
+		int rocks = atoi(rocks.c_str());
+		vector<char> newRow 
+	}
+	/*char initBoard[10] = {'0','1','2','3','4','5','6','7','8','9'};
 	for (int i=0; i<10; i++)
-		board[i] = initBoard[i];
+		board[i] = initBoard[i];*/
 }
 
-void updateBoard( char board[10], int move, int player)
+void updateBoard(  vector<vector<char>> &board, int move, int player)
 {
-	if (player == CHALLENGER) {
+	/*if (player == CHALLENGER) {
 		board[move] = 'X';
 	} else if (player == HOST) {
 		board[move] = 'O';
 	} else
-		std::cout << "Problem with updateBoard function!" << std::endl;
+		std::cout << "Problem with updateBoard function!" << std::endl;*/
 }
 
-void displayBoard( char board[10] )
+void displayBoard( vector<vector<char>> board )
 {
-	std::cout << std::endl;
+	/*std::cout << std::endl;
 	std::cout << board[1] << " | " << board[2] << " | " << board[3] << std::endl;
 	std::cout << "__+___+__" << std::endl;
 	std::cout << board[4] << " | " << board[5] << " | " << board[6] << std::endl;
 	std::cout << "__+___+__" << std::endl;
 	std::cout << board[7] << " | " << board[8] << " | " << board[9] << std::endl;
-	std::cout << std::endl;
+	std::cout << std::endl;*/
 }
 
 int check4Win(char board[10])
@@ -100,12 +111,12 @@ int getMove(char board[10], int player)
 	return move;
 }
 
-int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::string port, int player)
+int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
 	int winner = noWinner;
-	char board[10];
+	std::vector<std::vector<char>> board;
 	int opponent;
 	int move;
 	bool myMove;
@@ -120,7 +131,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::strin
 		myMove = false;
 	}
 
-	initializeBoard(board);
+	initializeBoard(board, boardConfig);
 	displayBoard(board);
 
 	while (winner == noWinner) {

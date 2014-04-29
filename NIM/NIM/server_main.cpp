@@ -47,7 +47,10 @@ int server_main(int argc, char *argv[], std::string playerName)
 					//**Continue to Listen for incoming traffic**
 				}else if(acceptChallenge == "y"){
 					// Play the game
-					//allocate and bind a TCP server-socket (ie. a listening socket) 					p = passivesock(UDPPORT_NIM,"tcp");					strcpy_s(response_str,NIM_ACCEPT_CHALLENGE);					UDP_send(s, response_str, strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
+					//allocate and bind a TCP server-socket (ie. a listening socket) 
+					p = passivesock(UDPPORT_NIM,"tcp");
+					strcpy_s(response_str,NIM_ACCEPT_CHALLENGE);
+					UDP_send(s, response_str, strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
 					std::cout << "Sending: " << response_str << std::endl;
 
 					status = wait(s,5,0);
@@ -59,7 +62,8 @@ int server_main(int argc, char *argv[], std::string playerName)
 							closesocket(s);
 							//and wait for a TCP connection request from the client on port #29334.
 							//Once the TCP connection is established,
-							//the server code is ready to play the game. 							finished = true;
+							//the server code is ready to play the game. 
+							finished = true;
 						}
 					}
 				}

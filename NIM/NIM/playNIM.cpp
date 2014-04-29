@@ -115,18 +115,23 @@ bool check4Win(vector<vector<char>> board )
 	//return winner;
 }
 
-int getMove(vector<vector<char>> board , int player)
+int getMove(vector<vector<char>> board , int player, SOCKET s, string host, string server)
 {
 	int move;
 	char move_str[80];
 
-	std::cout << "Where do you want to place your ";
+	cout << "Make your move or send a message:" << endl;
+	/*std::cout << "Where do you want to place your ";
 	char mark = (player == CHALLENGER) ? 'X' : 'O';
-	std::cout << mark << "? " << std::endl;
+	std::cout << mark << "? " << std::endl;*/
 
 	do {
-		std::cout << "Your move? ";
+		std::cout << "Waiting on your response: ";
 		std::cin  >> move_str;
+		if(move_str[0] == 'C')
+		{
+
+		}
 		move = atoi(move_str);
 		if (board[move] == 'X' || board[move] == 'O') move = 0;
 	} while (move < 1 || move > 9);
@@ -134,7 +139,7 @@ int getMove(vector<vector<char>> board , int player)
 	return move;
 }
 
-int playNIM(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
+int playTicTacToe(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
@@ -162,7 +167,7 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
 			// Get my move & display board
 			move = getMove(board,player);
 			std::cout << "Board after your move:" << std::endl;
-			updateBoard(board,move,player);
+			updateBoard(board,move);
 			displayBoard(board);
 
 			// Send move to opponent
@@ -171,6 +176,11 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
 			(1) Convert the single digit integer, move, to a char[]
 			(2) Send the char[] to the opponent, using UDP_send()
 			****/
+			char moveInfo[2] ;
+            _itoa_s(move, moveInfo, 1);
+            moveInfo[1] = '\0';
+            
+            UDP_send(s,moveInfo,2,host.c_str(), server);
 
 		} else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
@@ -183,6 +193,21 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
 			(4)      Display the new board
 			(5) If no response is detected within 20 seconds, set winner equal to ABORT
 			****/
+
+			if(wait(s, 20, 0) != 0)
+            {
+                UDP_recv(s, moveInfo, sizeof(moveInfo), chost, cport);
+                move = atoi(moveInfo);
+
+                std::cout << "Board after your opponent's move:" << std::endl;
+                updateBoard(board,move,player);
+                displayBoard(board);
+            }
+            else
+            {
+                winner = ABORT;
+            }
+
 		}
 		myMove = !myMove;
 

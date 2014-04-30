@@ -1,72 +1,94 @@
-// client_main.cpp
-//   This function serves as the "main" function for the client-side
-#include "nim.h"
 #include <iostream>
-#include <string>
-#include <WinSock2.h>
+using namespace std;
+#include "nim.h";
 
-int client_main(int argc, char *argv[], std::string playerName)
-{/*
+void   client_main(int argc, char* argv[] )
+{
+	char clientName[ MAX_SERVICE_SIZE ];
+	cout << "Name?" << endl;
+	cin >> clientName;
+
+	SOCKET s = connectsock( BROADCAST_ADDR, UDPPORT_NIM, "udp" );
 	std::string host;
 	std::string port;
-	//ServerStruct server[MAX_SERVERS];
+	ServerStruct server[MAX_HOST];
+	int numServers = 0;
+	UDP_send( s, "Name?", MAX_SEND_BUF - 1, BROADCAST_ADDR, UDPPORT_NIM );
 
-	SOCKET s = connectsock("","","udp");		// Create a socket  (Don't need to designate a host or port for UDP
+	int status = wait( s, 20, 0 );
+	bool serverFound = false;
 
-	// Find all TicTacToe servers
-	std::cout << std::endl << "Looking for TicTacToe servers ... " << std::endl;
-	int numServers;
-	//getServers(s,broadcastAddress,TicTacToe_UDPPORT, server, numServers);
+	while( status > 0 )
+	{
+		serverFound = true;
+		char datagram[MAX_RECV_BUF];
 
-	if (numServers == 0) {
-		std::cout << std::endl << "Sorry.  No TicTacToe servers were found.  Try again later." << std::endl << std::endl;
-	} else {
-		// Display the list of servers found
-		std::cout << std::endl << "Found TicTacToe server";
-		if (numServers == 1) {
-			std::cout << ":" << "  " << server[0].name << std::endl;
-		} else {
-			std::cout << "s:" << std::endl;
-			for (int i=0; i<numServers; i++) {
-				std::cout << "  " << i+1 << " - " << server[i].name << std::endl;
-			}
-			std::cout << std::endl << "  " << numServers+1 << " - QUIT" << std::endl;
+		UDP_recv( s, datagram, MAX_RECV_BUF - 1, server[numServers].host, server[numServers].port );
+		if( strncmp( datagram, clientName, 5 ) == 0 )
+		{
+			char* afterPrefix = strstr( datagram, clientName ) + strlen( clientName );
+			strcpy_s( server[numServers].name, afterPrefix );
+
+			numServers++;
 		}
-		std::cout << std::endl;
-
-		// Allow user to select someone to challenge
-		int answer = 0;
-		std::string answer_str;
-		if (numServers == 1) {
-			std::cout << "Do you want to challenge " << server[0].name << "? ";
-			std::getline(std::cin, answer_str);
-			if (answer_str[0] == 'y' || answer_str[0] == 'Y') answer = 1;
-		} else if (numServers > 1) {
-			std::cout << "Who would you like to challenge (1-" << numServers+1 << ")? ";
-			std::getline(std::cin,answer_str);
-			answer = atoi(answer_str.c_str());
-			if (answer > numServers) answer = 0;
+		else
+		{ 
+			//ignore 
 		}
-			
-		if (answer >= 1 && answer <= numServers) {
-			// Extract the opponent's info from the server[] array
-			std::string serverName;
-			serverName = server[answer-1].name;		// Adjust for 0-based array
-			host = server[answer-1].host;
-			port = server[answer-1].port;
-
-			// Append playerName to the TicTacToe_CHALLENGE string & send a challenge to host:port
-			char buf[MAX_SEND_BUF];
-			//strcpy_s(buf,TicTacToe_CHALLENGE);
-			strcat_s(buf,playerName.c_str());
-			int len = UDP_send(s, buf, strlen(buf)+1,(char*)host.c_str(), (char*)port.c_str());
-
-			// Play the game.  You are the 'X' player
-			//int winner = playTicTacToe(s, serverName, host, port, X_PLAYER);
-		}
+		status = wait( s, 20, 0 );
 	}
 
-	closesocket(s);
-	*/
-	return 0;
+	if(serverFound == true)
+	{
+		bool readyToQuit = false;
+		char datagram [MAX_RECV_BUF];
+		do{
+			
+			cout << "Choose a server. Enter '0' to quit: " << endl;
+			for(int i = 0; i < numServers; i++)
+			{
+				cout << i + 1 << ". " << server[i].name << endl;
+			}
+		
+			int chosenServerIndex;
+			cin >> chosenServerIndex;
+			if( chosenServerIndex == 0 )
+			{
+				readyToQuit = true;
+			}
+			while( chosenServerIndex > numServers )
+			{
+				cout << "Incorrect input. Choose again." << endl;
+				cin >> chosenServerIndex;
+			}
+			char challenge [1034] = "Play?Name=";
+			strcat( challenge, clientName );
+			UDP_send( s, challenge, MAX_SEND_BUF - 1, server[chosenServerIndex - 1].host, UDPPORT_NIM );
+
+			status = wait( s, 20, 0 );
+
+			if(status > 0)
+			{
+				UDP_recv( s, datagram, MAX_RECV_BUF - 1, server[chosenServerIndex - 1].host, UDPPORT_NIM );
+				if( strcmp( datagram, "YES" ) == 0 )
+				{
+					UDP_send( s, "GREAT!", MAX_SEND_BUF, server[chosenServerIndex - 1].host, UDPPORT_NIM );
+					closesocket(s);
+					SOCKET s = connectsock( server[chosenServerIndex - 1].host, TCPPORT_NIM, "tcp" );
+					//play_Nim( s, ??, ?? );
+					readyToQuit = true;
+				}
+				else
+				{
+					cout << "Negative response. Try again." << endl;
+				}
+			}
+			else
+			{
+				cout << "Negative response. Try again." << endl;
+			}
+
+		}while( !readyToQuit );
+
+	}
 }

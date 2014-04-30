@@ -7,10 +7,11 @@
 
 int server_main(int argc, char *argv[], std::string playerName)
 {
-	SOCKET s, p;
+	SOCKET s, ps;
 	char buf[MAX_RECV_BUF];
 	std::string host;
 	std::string port;
+	std::string boardConfig;
 	char response_str[MAX_SEND_BUF];
 	
 	s = passivesock(UDPPORT_NIM,"udp");
@@ -58,11 +59,14 @@ int server_main(int argc, char *argv[], std::string playerName)
 						len = UDP_recv(s, buf, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
 						std::cout << "Received: " << buf << std::endl;
 						if(strcmp(buf, NIM_RESPONSE_CHALLENGE) == 0){
-							//Your program should close the UDP socket (#29333) 
+							//Close the UDP socket (#29333) 
 							closesocket(s);
-							//and wait for a TCP connection request from the client on port #29334.
+							//wait for a TCP connection request from the client on port #29334.
+							ps = passivesock(TCPPORT_NIM , "tcp");
+							
 							//Once the TCP connection is established,
-							//the server code is ready to play the game. 
+							//the server code is ready to play the game.
+							playNIM(ps, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
 							finished = true;
 						}
 					}

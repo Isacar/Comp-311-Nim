@@ -36,6 +36,7 @@ char*  timestamp(void);
 void   server_main(int,char*[]);
 void   client_main(int,char*[]);
 void   play_Nim(SOCKET, bool, char*);
+int	   playNIM(SOCKET, std::string , std::string ,std::string ,int, std::string);
 int    UDP_recv(SOCKET, char*, int, char*, char*);
 int    UDP_send (SOCKET, char[], int, char[], char[]);
 int    wait(SOCKET, int, int);

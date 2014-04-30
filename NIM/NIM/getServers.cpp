@@ -68,11 +68,11 @@ void getServers(SOCKET s, char *broadcastAddress, char *broadcastPort, ServerStr
             std::string name = buf;
             name = name.substr(strlen(NIM_NAME));
             server[numServers].name = name;
-            server[numServers].host = host;
-            server[numServers].port = port;
+			server[numServers].host = host.c_str();
+			server[numServers].port = port.c_str();
 
             numServers++;
-            std::cout << name << std::endl;
+            
         }
     }
    

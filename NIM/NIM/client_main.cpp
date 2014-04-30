@@ -49,7 +49,7 @@ void   client_main(int argc, char* argv[] )
 			int answer = 0;
 			std::string answer_str;
 			if (numServers == 1) {
-				std::cout << "Do you want to challenge (y/n) " << server[0].name << "? ";
+				std::cout << "Do you want to challenge  " << server[0].name << "? (y/n) ";
 				std::getline(std::cin, answer_str);
 				if (answer_str[0] == 'y' || answer_str[0] == 'Y') answer = 1;
 			} else if (numServers > 1) {
@@ -62,11 +62,12 @@ void   client_main(int argc, char* argv[] )
 		if (answer >= 1 && answer <= numServers) {
 				// Extract the opponent's info from the server[] array
 				std::string serverName;
-				serverName = server[answer-1].name;		// Adjust for 0-based array
+				serverName = server[answer-1].name;
+				// Adjust for 0-based array
 				host = server[answer-1].host;
 				port = server[answer-1].port;
 
-				// Append playerName to the TicTacToe_CHALLENGE string & send a challenge to host:port
+				// Append playerName to the NIM_CHALLENGE string & send a challenge to host:port
 				char buf[MAX_SEND_BUF];
 				strcpy_s(buf,NIM_CHALLENGE);
 				strcat_s(buf,clientName);
@@ -83,25 +84,41 @@ void   client_main(int argc, char* argv[] )
 					{
 						UDP_send( s, "GREAT!", MAX_SEND_BUF, (char*)host.c_str(), (char*)port.c_str());
 						closesocket(s);
-						SOCKET s = connectsock((char*)host.c_str(), TCPPORT_NIM, "tcp" );
-						std::cout <<"Playing nim" << std::endl;
+						std::cout <<"Creating tcp socket" << std::endl;
+						SOCKET cs = connectsock((char*)host.c_str(), TCPPORT_NIM, "tcp" );
+						std::cout <<"Ready to play NIM" << std::endl;
 						readyToQuit = true;
 					}
 					else
 					{
 						//Negative response
-						std::cout << "Negative response. Try again." << std::endl;
-						std::cout << "Do you want to challenge somebody else? (y/n) " ;
+						std::cout << "Negative response. Do you want to challenge somebody else? (y/n) " << std::endl;
+						
 						std::cin >> response;
-						//allow your user to challenge some other host or quit the program. 						if(response == "y")							readyToQuit = true;						else{							readyToQuit = false;						}
+						//allow your user to challenge some other host or quit the program. 
+						if(response == "y")
+							readyToQuit = false;
+						else{
+							readyToQuit = true;
+						}
+
 					}
 				}
 				else
 				{
 					std::cout << "No response. Try again." << std::endl;
+					std::cout << "Do you want to challenge somebody else? (y/n) " << std::endl;
+						
+						std::cin >> response;
+						//allow your user to challenge some other host or quit the program. 
+						if(response == "y")
+							readyToQuit = false;
+						else{
+							readyToQuit = true;
+						}
 				}
 		}
-	}while( !readyToQuit );
+	}while( readyToQuit  == false);
 	
 	
 

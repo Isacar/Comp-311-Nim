@@ -42,7 +42,7 @@ void server_main(int argc, char *argv[])
 			char *startOfName = strstr(buf,NIM_CHALLENGE);
 			if (startOfName != NULL) {
 				std::cout << std::endl << "You have been challenged by " << startOfName+strlen(NIM_CHALLENGE) << std::endl;
-				std::cout << std::endl << "Do you want to accept the challenge? y/n" <<std::endl;
+				std::cout << std::endl << "Do you want to accept the challenge? (y/n) ";
 				std::cin>>acceptChallenge;
 
 				if(acceptChallenge == "n"){
@@ -67,10 +67,13 @@ void server_main(int argc, char *argv[])
 							closesocket(s);
 							//wait for a TCP connection request from the client on port #29334.
 							ps = passivesock(TCPPORT_NIM , "tcp");
-							
+
+							std::cout <<"Ready to play NIM" << std::endl;
+							//std::cout <<"Close tcp socket" << std::endl;
+							//closesocket(ps);
 							//Once the TCP connection is established,
 							//the server code is ready to play the game.
-							playNIM(ps, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
+							//playNIM(ps, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
 							finished = true;
 						}
 					}

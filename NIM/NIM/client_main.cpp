@@ -11,20 +11,20 @@ void   client_main(int argc, char* argv[] )
 {
 	bool readyToQuit = false;
 	char datagram [MAX_RECV_BUF];
-	std::string response;
-	char clientName[ MAX_SERVICE_SIZE ];
+	std::string clientName;
+	//Prompt for name
 	std::cout << "Name? ";
-	std::cin >> clientName;
+	std::getline(std::cin,clientName );
 	
 	std::string host;
 	std::string port;
 	ServerStruct server[MAX_SERVERS];
+	// Create a socket  (UDP)
+	SOCKET s = connectsock("","","udp");		
 
-	SOCKET s = connectsock("","","udp");		// Create a socket  (Don't need to designate a host or port for UDP
-
-	// Find all NIM servers
 	std::cout << std::endl << "Looking for NIM servers ... " << std::endl;
 	int numServers;
+	//broadcast datagram to the network
 	getServers(s,BROADCAST_ADDR,UDPPORT_NIM, server, numServers);
 
 	if (numServers == 0) {
@@ -45,19 +45,26 @@ void   client_main(int argc, char* argv[] )
 	}
 
 	// Allow user to select someone to challenge
-	do{
+	while( readyToQuit  == false && numServers > 0){
+
 			int answer = 0;
 			std::string answer_str;
 			if (numServers == 1) {
 				std::cout << "Do you want to challenge  " << server[0].name << "? (y/n) ";
 				std::getline(std::cin, answer_str);
 				if (answer_str[0] == 'y' || answer_str[0] == 'Y') answer = 1;
+				else readyToQuit = true;
 			} else if (numServers > 1) {
 				std::cout << "Who would you like to challenge (1-" << numServers+1 << ")? ";
 				std::getline(std::cin,answer_str);
 				answer = atoi(answer_str.c_str());
-				if (answer > numServers) answer = 0;
+				if (answer > numServers){ 
+					answer = 0;
+					readyToQuit = true;
+				}
 			}
+
+	
 
 		if (answer >= 1 && answer <= numServers) {
 				// Extract the opponent's info from the server[] array
@@ -67,61 +74,49 @@ void   client_main(int argc, char* argv[] )
 				host = server[answer-1].host;
 				port = server[answer-1].port;
 
-				// Append playerName to the NIM_CHALLENGE string & send a challenge to host:port
+				// Append playerName  & send a challenge datagram to the chosen server
 				char buf[MAX_SEND_BUF];
 				strcpy_s(buf,NIM_CHALLENGE);
-				strcat_s(buf,clientName);
-				
-				//bug is somewhere below
+				strcat_s(buf,(char*)clientName.c_str());
 				int len = UDP_send(s, buf, strlen(buf)+1,(char*)host.c_str(), (char*)port.c_str());
 
 				int status = wait( s, 20, 0 );
-
-				if(status > 0)
-				{
+				bool serverAcceptedChallenge = false;
+				
+				if(status == 1){
 					UDP_recv( s, datagram, MAX_RECV_BUF - 1, (char*)host.c_str(), (char*)port.c_str());
-					if( strcmp( datagram, "YES" ) == 0 )
-					{
-						UDP_send( s, "GREAT!", MAX_SEND_BUF, (char*)host.c_str(), (char*)port.c_str());
+					if( strcmp( datagram, NIM_ACCEPT_CHALLENGE ) == 0 ){
+						serverAcceptedChallenge = true;
+						UDP_send( s, NIM_RESPONSE_CHALLENGE, MAX_SEND_BUF, (char*)host.c_str(), (char*)port.c_str());
+						//close the UDP socket
 						closesocket(s);
 						std::cout <<"Creating tcp socket" << std::endl;
+
+						//allocate and connect a TCP client-socket 
 						SOCKET cs = connectsock((char*)host.c_str(), TCPPORT_NIM, "tcp" );
+
 						std::cout <<"Ready to play NIM" << std::endl;
 						readyToQuit = true;
 					}
-					else
-					{
-						//Negative response
-						std::cout << "Negative response. Do you want to challenge somebody else? (y/n) " << std::endl;
-						
-						std::cin >> response;
-						//allow your user to challenge some other host or quit the program. 
-						if(response == "y")
-							readyToQuit = false;
-						else{
-							readyToQuit = true;
-						}
+					
+				}
 
-					}
-				}
-				else
-				{
-					std::cout << "No response. Try again." << std::endl;
-					std::cout << "Do you want to challenge somebody else? (y/n) " << std::endl;
+				//Manage negative response
+				if(serverAcceptedChallenge == false){
+					//challenge some other host or quit the program
+					std::cout << serverName <<" declined challenge " << std::endl;
+					std::cout << "Do you want to challenge somebody else? (y/n) ";
 						
-						std::cin >> response;
-						//allow your user to challenge some other host or quit the program. 
-						if(response == "y")
+					//allow your user to challenge some other host or quit the program. 
+						std::getline(std::cin,answer_str);
+						if(answer_str[0] == 'y' || answer_str[0] == 'Y')
 							readyToQuit = false;
-						else{
+						else
 							readyToQuit = true;
-						}
 				}
+				
 		}
-	}while( readyToQuit  == false);
-	
-	
 
-
+	}
 	
 }

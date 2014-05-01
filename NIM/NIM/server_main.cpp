@@ -15,6 +15,7 @@ void server_main(int argc, char *argv[])
 	char response_str[MAX_SEND_BUF];
 	
 	s = passivesock(UDPPORT_NIM,"udp");
+
 	//Prompt for the name of the player
 	std::string playerName;
 	std::cout << "What is your name? ";
@@ -50,6 +51,8 @@ void server_main(int argc, char *argv[])
 					UDP_send(s, response_str, strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
 					std::cout << "Sending: " << response_str << std::endl;
 					//**Continue to Listen for incoming traffic**
+					std::cout << std::endl << "Waiting for a challenge..." << std::endl;
+
 				}else if(acceptChallenge == "y"){
 					// Play the game
 					//allocate and bind a TCP server-socket (ie. a listening socket) 

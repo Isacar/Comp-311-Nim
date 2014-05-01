@@ -2,7 +2,7 @@
 
 #include <winsock2.h>
 #include <string>
-static char BROADCAST_ADDR[] = "169.254.255.255"; //"10.1.255.255"; 
+static char BROADCAST_ADDR[] = "10.2.95.255"; //"169.254.255.255"; //"10.1.255.255"; 
 static char UDPPORT_NIM[] = "29333";
 static char TCPPORT_NIM[] = "29334";
 

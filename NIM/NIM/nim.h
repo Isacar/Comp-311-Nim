@@ -12,6 +12,8 @@ static char TCPPORT_NIM[] = "29334";
 #define NIM_ACCEPT_CHALLENGE "YES"
 #define NIM_REJECT_CHALLENGE "NO"
 #define NIM_RESPONSE_CHALLENGE "GREAT!"
+#define NIM_BOARDCONFIG  "CONFIG="
+
 
 
 const int CHALLENGER = 1;

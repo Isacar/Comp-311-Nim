@@ -94,7 +94,7 @@ void   client_main(int argc, char* argv[] )
 						//Wait for board config.
 						status = wait( s, 5, 0 );
 						UDP_recv( s, datagram, MAX_RECV_BUF - 1, (char*)host.c_str(), (char*)port.c_str());
-						if ( strncmp(buf,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
+						if ( strncmp(datagram,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
 							char *startOfName = strstr(datagram,NIM_BOARDCONFIG);
 							boardConfig = startOfName+strlen(NIM_BOARDCONFIG);
 							

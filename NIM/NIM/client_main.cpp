@@ -18,6 +18,7 @@ void   client_main(int argc, char* argv[] )
 	
 	std::string host;
 	std::string port;
+	std::string boardConfig;
 	ServerStruct server[MAX_SERVERS];
 	// Create a socket  (UDP)
 	SOCKET s = connectsock("","","udp");		
@@ -89,14 +90,33 @@ void   client_main(int argc, char* argv[] )
 						serverAcceptedChallenge = true;
 						UDP_send( s, NIM_RESPONSE_CHALLENGE, MAX_SEND_BUF, (char*)host.c_str(), (char*)port.c_str());
 						//close the UDP socket
-						closesocket(s);
-						std::cout <<"Creating tcp socket" << std::endl;
 
-						//allocate and connect a TCP client-socket 
-						SOCKET cs = connectsock((char*)host.c_str(), TCPPORT_NIM, "tcp" );
+						//Wait for board config.
+						status = wait( s, 5, 0 );
+						UDP_recv( s, datagram, MAX_RECV_BUF - 1, (char*)host.c_str(), (char*)port.c_str());
+						if ( strncmp(buf,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
+							char *startOfName = strstr(datagram,NIM_BOARDCONFIG);
+							boardConfig = startOfName+strlen(NIM_BOARDCONFIG);
+							
+							closesocket(s);
 
-						std::cout <<"Ready to play NIM" << std::endl;
-						//playNIM(cs, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
+
+							std::cout <<"Ready to play NIM" << std::endl;
+							
+							std::cout <<"Creating tcp socket" << std::endl;
+
+							//allocate and connect a TCP client-socket 
+							SOCKET cs = connectsock((char*)host.c_str(), TCPPORT_NIM, "tcp" );
+					
+							std::cout <<"Ready to play NIM" << std::endl;
+							playNIM(cs, CHALLENGER, boardConfig);
+							//playNIM(cs, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
+
+						}else{
+							//Didn't recieve board configuration
+						}
+					
+						
 						readyToQuit = true;
 					}
 					

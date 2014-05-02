@@ -2,7 +2,7 @@
 
 #include <winsock2.h>
 #include <string>
-static char BROADCAST_ADDR[] = "10.2.95.255"; //"169.254.255.255"; //"10.1.255.255"; 
+static char BROADCAST_ADDR[] = "10.1.255.255" ; //"10.2.95.255"; //"169.254.255.255"; //; 
 static char UDPPORT_NIM[] = "29333";
 static char TCPPORT_NIM[] = "29334";
 
@@ -40,7 +40,7 @@ char*  timestamp(void);
 void   server_main(int,char*[]);
 void   client_main(int,char*[]);
 //void   play_Nim(SOCKET, bool, char*);
-int		playNIM(SOCKET, std::string , std::string ,std::string ,int, std::string);
+int		playNIM(SOCKET, int, std::string);
 int		UDP_recv (SOCKET, char*, int, char*, char*);
 int		UDP_send (SOCKET, char*, int, char*, char*);
 int		wait(SOCKET, int, int);

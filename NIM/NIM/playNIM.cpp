@@ -12,14 +12,15 @@ using namespace std;
 
 void initializeBoard( vector<vector<char>> &board, string boardConfig)
 {
-	int piles = atoi((char*)boardConfig[0]);
+	string numPiles = boardConfig.substr(0,1);
+	int piles = atoi(numPiles.c_str());
 	boardConfig = boardConfig.substr(1);
 	for(piles; piles > 0; piles--)
 	{
 		string rock = boardConfig.substr(0,2);
 		int rocks = atoi(rock.c_str());
 		vector<char> row;		
-		for(rocks; rocks > 0; rocks++)
+		for(rocks; rocks > 0; rocks--)
 		{
 			row.push_back('0');
 		}
@@ -98,46 +99,7 @@ bool check4Win(vector<vector<char>> board, bool myMove, int opponent)
 	}
 
 	return winner;
-	//// Check for vertical winners
-	//int i = 1;
-	//while (winner == noWinner && i < 4) {
-	//	if (board[i] == board[i+3] && board[i] == board[i+6]) {
-	//		winner = (board[i] == 'X') ? xWinner : oWinner;
-	//	}
-	//	i++;
-	//}
-
-	//// Check for horizontal winners
-	//i = 1;
-	//while (winner == noWinner && i < 8) {
-	//	if (board[i] == board[i+1] && board[i] == board[i+2]) {
-	//		winner = (board[i] == 'X') ? xWinner : oWinner;
-	//	}
-	//	i  += 3;
-	//}
-
-	//// Check for diagonal winners
-	//if (winner == noWinner) {
-	//	if ( (board[1] == board[5] && board[1] == board[9]) ||
-	//		 (board[3] == board[5] && board[3] == board[7]) ) {
-	//		winner = (board[5] == 'X') ? xWinner : oWinner;
-	//	}
-	//}
-
-	//// Check for tie
-	//i = 1;
-	//int numMoves = 0;
-	//while ( i < 10) {
-	//	if ( (board[i] == 'X' || board[i] == 'O') ) {
-	//		numMoves++;
-	//	}
-	//	i++;
-	//}
-	//if (winner == noWinner && numMoves == 9)
-	//	winner = TIE;
-	//
-
-	//return winner;
+	
 }
 
 int getMove(vector<vector<char>> board ,  SOCKET s)
@@ -193,7 +155,7 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 	return move;
 }
 
-int playNIM(SOCKET s, std::string serverName, std::string host, std::string port, int player, std::string boardConfig)
+int playNIM(SOCKET s, const int player, std::string boardConfig)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
@@ -204,12 +166,7 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
 	char moveInfo[4];
 	bool myMove;
 
-	char* chost = new char[host.length() +1];
-	strcpy_s(chost, sizeof(chost), host.c_str());
-	char* cserver = new char[serverName.length() + 1];
-	strcpy_s(cserver, sizeof(cserver), serverName.c_str());
-	char* cport = new char[port.length() +1];
-	strcpy_s(cport, sizeof(cport), port.c_str());
+	
 
 	
 

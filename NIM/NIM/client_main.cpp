@@ -96,6 +96,7 @@ void   client_main(int argc, char* argv[] )
 						SOCKET cs = connectsock((char*)host.c_str(), TCPPORT_NIM, "tcp" );
 
 						std::cout <<"Ready to play NIM" << std::endl;
+						//playNIM(cs, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
 						readyToQuit = true;
 					}
 					

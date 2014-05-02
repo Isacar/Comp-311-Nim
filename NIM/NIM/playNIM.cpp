@@ -36,7 +36,7 @@ void updateBoard(vector<vector<char>> &board, int move)
 	int pile = move/100;
 	int rocks = move %100;
 
-	for(rocks; rocks > 0; rocks)
+	for(rocks; rocks > 0; rocks--)
 	{
 		board.at(pile - 1).pop_back();
 	}

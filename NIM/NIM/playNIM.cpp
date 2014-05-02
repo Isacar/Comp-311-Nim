@@ -69,10 +69,35 @@ void displayBoard( vector<vector<char>> board )
 	std::cout << std::endl;*/
 }
 
-bool check4Win(vector<vector<char>> board )
+bool check4Win(vector<vector<char>> board, bool myMove, int opponent)
 {
-	int winner = noWinner;
+	int winner;
 
+	if(opponent == HOST)
+	{
+		if(myMove)
+			winner = hostWinner;
+		else
+			winner = challengerWinner;
+	}
+	else
+	{
+		if(myMove)
+			winner = challengerWinner;
+		else
+			winner = hostWinner;
+	}
+
+	for (int i = 0; i < board.size(); i++)
+	{
+		if(board[i].size() > 0)
+		{
+			winner = noWinner;
+			return winner;
+		}
+	}
+
+	return winner;
 	//// Check for vertical winners
 	//int i = 1;
 	//while (winner == noWinner && i < 4) {
@@ -112,7 +137,7 @@ bool check4Win(vector<vector<char>> board )
 	//	winner = TIE;
 	//
 
-	return winner;
+	//return winner;
 }
 
 int getMove(vector<vector<char>> board ,  SOCKET s)
@@ -129,7 +154,7 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 	std::cout << mark << "? " << std::endl;*/
 
 	do {
-		std::cout << "Waiting on your response: ";
+		std::cout << "Waiting on your move or chat message: ";
 		std::cin  >> move_str;
 		if(move_str[0] == 'C' || move_str[0] != 'c')
 		{
@@ -138,6 +163,7 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 				move_str[i-1] = move_str[i];
 			}
 			send(s, move_str, 80, 0);
+			pile = 0;
 			//isMessage = true;
 		}
 		else
@@ -145,10 +171,24 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 			move = atoi(move_str);
 			pile = move /100 ;
 			numRocks = move % 100;
-			
+			if( pile < 1 || pile > 9)
+			{
+				cout << "Pile # must be between 1 and 9." << endl;
+				pile = 0;
+			}
+			else if(board[pile - 1].size() < 1)
+			{
+				cout << "Pile #" << pile << " is empty!" << endl;
+				pile = 0;
+			}
+			else if(board[pile - 1].size() < numRocks)
+			{
+				cout << "Pile #" << pile << " only has " << board[pile - 1].size() << " left!" << endl;
+				pile = 0;
+			}
 		}
 		/*if (board[move] == 'X' || board[move] == 'O') move = 0;*/
-	} while (isMessage || pile < 3 || pile > 9);
+	} while (pile < 1 || pile > 9);
 
 	return move;
 }
@@ -161,7 +201,7 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
 	std::vector<std::vector<char>> board;
 	int opponent;
 	int move;
-	char moveInfo[2];
+	char moveInfo[4];
 	bool myMove;
 
 	char* chost = new char[host.length() +1];
@@ -200,8 +240,8 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
 			(1) Convert the single digit integer, move, to a char[]
 			(2) Send the char[] to the opponent, using UDP_send()
 			****/			
-            _itoa_s(move, moveInfo, 1);
-            moveInfo[1] = '\0';			
+            _itoa_s(move, moveInfo, 3);
+            moveInfo[3] = '\0';			
 
             send(s, moveInfo, 2, 0);
 
@@ -219,7 +259,7 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
 
 			if(wait(s, 20, 0) != 0)
             {
-                UDP_recv(s, moveInfo, sizeof(moveInfo), chost, cport);
+                recv(s, moveInfo, sizeof(moveInfo), 0);
                 move = atoi(moveInfo);
 
                 std::cout << "Board after your opponent's move:" << std::endl;
@@ -232,18 +272,21 @@ int playNIM(SOCKET s, std::string serverName, std::string host, std::string port
             }
 
 		}
-		myMove = !myMove;
+		
 
 		if (winner == ABORT) {
 			std::cout << "No response from opponent.  Aborting the game..." << std::endl;
-		} else {
-			winner = check4Win(board);
+		} 
+		else {
+			winner = check4Win(board,myMove, opponent);
 		}
 		
 		if (winner == player)
 			std::cout << "You WIN!" << std::endl;		
 		else if (winner == opponent)
 			std::cout << "I'm sorry.  You lost" << std::endl;
+
+		myMove = !myMove;
 	}
 
 	return winner;

@@ -18,9 +18,8 @@ const int CHALLENGER = 1;
 const int HOST = 2;
 const int ABORT    = -1;
 const int noWinner = 0;
-const int xWinner  = 1;
-const int oWinner  = 2;
-const int TIE      = 3;
+const int hostWinner  = 2;
+const int challengerWinner  = 1;
 
 const int MAX_SEND_BUF     = 2048;
 const int MAX_RECV_BUF     = 2048;

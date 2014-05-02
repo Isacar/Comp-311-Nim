@@ -118,7 +118,7 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 	do {
 		std::cout << "Waiting on your move or chat message: ";
 		std::cin  >> move_str;
-		if(move_str[0] == 'C' || move_str[0] != 'c')
+		if(move_str[0] == 'C' || move_str[0] == 'c')
 		{
 			for(int i = 1; i < 80; i++)
 			{
@@ -127,6 +127,10 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 			send(s, move_str, 80, 0);
 			pile = 0;
 			//isMessage = true;
+		}
+		else if(move_str[0] == 'F' || move_str[0]  == 'f')
+		{
+			std:: cout << "You are forfeiting." << endl;
 		}
 		else
 		{
@@ -163,7 +167,7 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 	std::vector<std::vector<char>> board;
 	int opponent;
 	int move;
-	char moveInfo[4];
+	char moveInfo[MAX_SEND_BUF];
 	bool myMove;
 
 	
@@ -198,7 +202,7 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 			(2) Send the char[] to the opponent, using UDP_send()
 			****/			
             _itoa_s(move, moveInfo, 3);
-            moveInfo[3] = '\0';			
+            //moveInfo[] = '\0';			
 
             send(s, moveInfo, 2, 0);
 

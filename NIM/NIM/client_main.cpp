@@ -97,7 +97,7 @@ void   client_main(int argc, char* argv[] )
 
 						if ( strncmp(datagram,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
 
-						if ( strncmp(buf,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
+						if ( strncmp(datagram,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
 
 							char *startOfName = strstr(datagram,NIM_BOARDCONFIG);
 							boardConfig = startOfName+strlen(NIM_BOARDCONFIG);

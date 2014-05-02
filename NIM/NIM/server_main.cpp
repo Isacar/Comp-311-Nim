@@ -11,7 +11,7 @@ void server_main(int argc, char *argv[])
 	char buf[MAX_RECV_BUF];
 	std::string host;
 	std::string port;
-	std::string boardConfig = "3030405";
+	std::string boardConfig;
 	char response_str[MAX_SEND_BUF];
 	
 	s = passivesock(UDPPORT_NIM,"udp");
@@ -20,6 +20,17 @@ void server_main(int argc, char *argv[])
 	std::string playerName;
 	std::cout << "What is your name? ";
 	std::getline(std::cin, playerName);
+	bool properConfig = true;
+	do
+	{
+		
+		std::cout << "Please Enter board configuration: ";
+		std::getline(std::cin, boardConfig);
+
+
+
+	}
+	while (!properConfig);
 
 	//Listen for incoming traffic
 	std::cout << std::endl << "Waiting for a challenge..." << std::endl;

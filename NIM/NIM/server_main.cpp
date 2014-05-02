@@ -106,9 +106,13 @@ void server_main(int argc, char *argv[])
 						std::cout << "Received: " << buf << std::endl;
 						if(strcmp(buf, NIM_RESPONSE_CHALLENGE) == 0){
 							//send board configuration to client
+<<<<<<< HEAD
 							strcpy_s(response_str,NIM_BOARDCONFIG);
 							strcat_s(response_str, boardConfig.c_str());
 							UDP_send(s, response_str, strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
+=======
+							UDP_send(s, (char*)boardConfig.c_str(), strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
+>>>>>>> a325648564cce1291d7e1fbba822ba3f98a3d361
 							//Close the UDP socket (#29333) 
 							closesocket(s);
 							//wait for a TCP connection request from the client on port #29334.

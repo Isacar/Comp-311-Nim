@@ -94,22 +94,36 @@ void   client_main(int argc, char* argv[] )
 						//Wait for board config.
 						status = wait( s, 5, 0 );
 						UDP_recv( s, datagram, MAX_RECV_BUF - 1, (char*)host.c_str(), (char*)port.c_str());
+<<<<<<< HEAD
 						if ( strncmp(datagram,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
+=======
+						if ( strncmp(buf,NIM_BOARDCONFIG,strlen(NIM_BOARDCONFIG)) == 0){
+>>>>>>> a325648564cce1291d7e1fbba822ba3f98a3d361
 							char *startOfName = strstr(datagram,NIM_BOARDCONFIG);
 							boardConfig = startOfName+strlen(NIM_BOARDCONFIG);
 							
 							closesocket(s);
 
+<<<<<<< HEAD
 
 							std::cout <<"Ready to play NIM" << std::endl;
 							
+=======
+<<<<<<< HEAD
+						std::cout <<"Ready to play NIM" << std::endl;
+						playNIM(cs, CHALLENGER, boardConfig);
+=======
+>>>>>>> a325648564cce1291d7e1fbba822ba3f98a3d361
 							std::cout <<"Creating tcp socket" << std::endl;
 
 							//allocate and connect a TCP client-socket 
 							SOCKET cs = connectsock((char*)host.c_str(), TCPPORT_NIM, "tcp" );
 					
 							std::cout <<"Ready to play NIM" << std::endl;
+<<<<<<< HEAD
 							playNIM(cs, CHALLENGER, boardConfig);
+=======
+>>>>>>> a325648564cce1291d7e1fbba822ba3f98a3d361
 							//playNIM(cs, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
 
 						}else{
@@ -117,6 +131,10 @@ void   client_main(int argc, char* argv[] )
 						}
 					
 						
+<<<<<<< HEAD
+=======
+>>>>>>> 39c0e73d3cb08756cd6a531a5fb504dcd3ed1628
+>>>>>>> a325648564cce1291d7e1fbba822ba3f98a3d361
 						readyToQuit = true;
 					}
 					

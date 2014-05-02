@@ -168,11 +168,7 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 	int opponent;
 	int move;
 	char moveInfo[MAX_SEND_BUF];
-	bool myMove;
-
-	
-
-	
+	bool myMove;	
 
 	if (player == CHALLENGER) {
 		std::cout << "Playing as Challenger" << std::endl;
@@ -201,7 +197,7 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 			(1) Convert the single digit integer, move, to a char[]
 			(2) Send the char[] to the opponent, using UDP_send()
 			****/			
-            _itoa_s(move, moveInfo, 3);
+            _itoa_s(move, moveInfo,10);
             //moveInfo[] = '\0';			
 
             send(s, moveInfo, 2, 0);
@@ -217,8 +213,8 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 			(4)      Display the new board
 			(5) If no response is detected within 20 seconds, set winner equal to ABORT
 			****/
-
-			if(wait(s, 20, 0) != 0)
+			int status = wait(s, 20, 0);
+			if(status > 0)
             {
                 recv(s, moveInfo, sizeof(moveInfo), 0);
                 move = atoi(moveInfo);

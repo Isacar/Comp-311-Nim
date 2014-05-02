@@ -54,9 +54,7 @@ void server_main(int argc, char *argv[])
 					std::cout << std::endl << "Waiting for a challenge..." << std::endl;
 
 				}else if(acceptChallenge == "y"){
-					// Play the game
-					//allocate and bind a TCP server-socket (ie. a listening socket) 
-					ps = passivesock(UDPPORT_NIM,"tcp");
+					
 					strcpy_s(response_str,NIM_ACCEPT_CHALLENGE);
 					UDP_send(s, response_str, strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
 					std::cout << "Sending: " << response_str << std::endl;
@@ -72,13 +70,17 @@ void server_main(int argc, char *argv[])
 							ps = passivesock(TCPPORT_NIM , "tcp");
 
 							std::cout <<"Ready to play NIM" << std::endl;
-							//std::cout <<"Close tcp socket" << std::endl;
-							//closesocket(ps);
-							//Once the TCP connection is established,
-							//the server code is ready to play the game.
-							//playNIM(ps, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
+			
+							playNIM(ps, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
 							finished = true;
 						}
+				//if the "Great!" datagram is not recieved within 5 seconds
+					}else{
+						std::cout <<startOfName+strlen(NIM_CHALLENGE)<<" is not ready to play NIM" << std::endl;
+						closesocket(ps);
+						//**Continue to Listen for incoming traffic**
+						std::cout << std::endl << "Waiting for a challenge..." << std::endl;
+
 					}
 				}
 			}
@@ -111,5 +113,5 @@ void server_main(int argc, char *argv[])
 			}
 		}
 	}
-	closesocket(s);
+	//closesocket(s);
 }

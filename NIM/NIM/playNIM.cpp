@@ -120,7 +120,7 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 	int move;
 	int pile;
 	int numRocks;
-	bool isMessage = false;
+	//bool isMessage = false;
 	char move_str[80];
 
 	cout << "Make your move or send a message:" << endl;
@@ -133,8 +133,12 @@ int getMove(vector<vector<char>> board ,  SOCKET s)
 		std::cin  >> move_str;
 		if(move_str[0] == 'C' || move_str[0] != 'c')
 		{
+			for(int i = 1; i < 80; i++)
+			{
+				move_str[i-1] = move_str[i];
+			}
 			send(s, move_str, 80, 0);
-			isMessage = true;
+			//isMessage = true;
 		}
 		else
 		{

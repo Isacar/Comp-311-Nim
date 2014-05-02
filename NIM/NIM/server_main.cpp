@@ -5,6 +5,8 @@
 #include <string>
 #include <WinSock2.h>
 
+
+
 void server_main(int argc, char *argv[])
 {
 	SOCKET s, ps;
@@ -27,7 +29,33 @@ void server_main(int argc, char *argv[])
 		std::cout << "Please Enter board configuration: ";
 		std::getline(std::cin, boardConfig);
 
+		std::string numPiles = boardConfig.substr(0,1);
+		int piles = atoi(numPiles.c_str());
+		//int numRocks = atoi(boardConfig.substr(1).c_str());
+		if( piles < 3 || piles > 9)
+		{
+			std::cout << "Pile # must be between 3 and 9." << std::endl;
+			properConfig = false;
+		}
+		else if(piles*2 != boardConfig.length() - 1)
+		{
+			std::cout << "Please specify the number of rocks for the correct amount of Piles." << std::endl;
+			properConfig = false;
+		}
+		else
+		{
+			for(int i = 1; i > boardConfig.length(); i + 2)
+			{
+				int numRocks = atoi(boardConfig.substr(i,2).c_str());
 
+				if(numRocks < 1 || numRocks > 20)
+				{
+					std::cout << "Piles can only hold 1 to 20 rocks." << std::endl;
+					properConfig = false;
+					break;
+				}
+			}
+		}
 
 	}
 	while (!properConfig);

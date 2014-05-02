@@ -111,7 +111,7 @@ void server_main(int argc, char *argv[])
 							strcat_s(response_str, boardConfig.c_str());
 							UDP_send(s, response_str, strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
 
-							UDP_send(s, (char*)boardConfig.c_str(), strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
+							//UDP_send(s, (char*)boardConfig.c_str(), strlen(response_str)+1, (char*)host.c_str(), (char*)port.c_str());
 
 							//Close the UDP socket (#29333) 
 							closesocket(s);

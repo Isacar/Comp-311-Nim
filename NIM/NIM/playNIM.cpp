@@ -118,10 +118,10 @@ char* getMove(vector<vector<char>> board ,  SOCKET s)
 
 	do {
 		std::cout << "Waiting on your move or chat message: ";
-		std::cin  >> move_str;
+		std::cin.getline(move_str, 80);
 		if(move_str[0] == 'C' || move_str[0] == 'c')
 		{
-			
+			pile =1;
 			//send(s, move_str, 80, 0);
 			//pile = 0;
 			//isMessage = true;
@@ -129,6 +129,7 @@ char* getMove(vector<vector<char>> board ,  SOCKET s)
 		else if(move_str[0] == 'F' || move_str[0]  == 'f')
 		{
 			std:: cout << "You are forfeiting." << endl;
+			pile =1;
 		}
 		else
 		{
@@ -191,14 +192,16 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 				while(moveInfo[0] == 'C' || moveInfo[0] == 'c')
 				{
 					send(s, moveInfo, MAX_SEND_BUF, 0);
-					strcpy_s(moveInfo,MAX_SEND_BUF, getMove(board, s));
+					moveInfo[0] = '\0';
+					strcpy_s(moveInfo,MAX_SEND_BUF, getMove(board, s));					
 				}
 			}
 			else if(moveInfo[0] == 'F' || moveInfo[0] == 'f')
 			{
 				winner = FORFEIT;
 			}
-			else
+
+			if(moveInfo[0] != 'F' || moveInfo[0] != 'f')
 			{
 				std::cout << "Board after your move:" << std::endl;
 				move = atoi(moveInfo);
@@ -230,21 +233,23 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 			(4)      Display the new board
 			(5) If no response is detected within 20 seconds, set winner equal to ABORT
 			****/
-			int status = wait(s, 20, 0);
+
+			/*int status = wait(s, 20, 0);
 			if(status > 0)
-            {
+            {*/
                 recv(s, moveInfo, sizeof(moveInfo), 0);
 
 				if(moveInfo[0] == 'c' || moveInfo[0] == 'C')
 				{
 					while(moveInfo[0] == 'C' || moveInfo[0] == 'c')
 					{
-						for(int i = 1; i < MAX_SEND_BUF; i+=2)
+						for(int i = 1; i < MAX_SEND_BUF; i++)
 						{
 							moveInfo[i-1] = moveInfo[i];
 						}
 						cout << moveInfo << endl;
-						cout << "Waiting for opponent's move." << endl;
+						cout << "Waiting for opponent's move." << endl;\
+						moveInfo[0] = '\0';
 						recv(s, moveInfo, MAX_SEND_BUF, 0);
 						
 					}
@@ -253,7 +258,7 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 				{
 					winner = FORFEIT;
 				}
-				else
+				if(moveInfo[0] != 'F' || moveInfo[0] != 'f')
 				{
 					move = atoi(moveInfo);
 
@@ -261,11 +266,11 @@ int playNIM(SOCKET s, const int player, std::string boardConfig)
 					updateBoard(board,move);
 					displayBoard(board);
 				}
-            }
+           /* }
             else
             {
                 winner = ABORT;
-            }
+            }*/
 
 		}
 		

@@ -122,7 +122,7 @@ void   client_main(int argc, char* argv[] )
 							playNIM(cs, CHALLENGER, boardConfig);
 
 							//playNIM(cs, (char*) playerName.c_str(), (char*)host.c_str(),TCPPORT_NIM , HOST, boardConfig);
-
+							 
 						}else{
 							//Didn't recieve board configuration
 						}

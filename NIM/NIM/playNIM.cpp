@@ -55,9 +55,9 @@ void displayBoard( vector<vector<char>> board )
 	cout << endl;
 	for(piles; piles > 0 ; piles--)
 	{		
-		for(int i = board.at(piles - 1).size(); i > 0; i--)
+		for(int i = 0; i < board.at(piles - 1).size(); i++)
 		{
-			cout << board.at(piles -1).at(i-1) << "|";
+			cout << board.at(piles - 1).at(i-1) << "|";
 		}
 		cout << endl;
 	}

@@ -19,6 +19,7 @@ static char TCPPORT_NIM[] = "29334";
 const int CHALLENGER = 1;
 const int HOST = 2;
 const int ABORT    = -1;
+const int FORFEIT = 3;
 const int noWinner = 0;
 const int hostWinner  = 2;
 const int challengerWinner  = 1;

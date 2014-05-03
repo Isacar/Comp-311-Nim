@@ -116,14 +116,16 @@ void server_main(int argc, char *argv[])
 							//Close the UDP socket (#29333) 
 							closesocket(s);
 							//wait for a TCP connection request from the client on port #29334.
+							sockaddr_in	clientSocketInfo;
+							int clen = sizeof(clientSocketInfo);
 							ps = passivesock(TCPPORT_NIM , "tcp");
-
+							SOCKET connectSocket = accept(ps,(LPSOCKADDR) &clientSocketInfo, &clen);
 							std::cout <<"Ready to play NIM" << std::endl;
 							//std::cout <<"Close tcp socket" << std::endl;
 							//closesocket(ps);
 							//Once the TCP connection is established,
 							//the server code is ready to play the game.
-							playNIM(ps, HOST, boardConfig);
+							playNIM(connectSocket, HOST, boardConfig);
 							finished = true;
 						}
 					}
